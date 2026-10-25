@@ -24,3 +24,14 @@ A Python application that retrieves and processes information from a REST API.
 This repository documents my progress as I strengthen my programming foundations and work towards building practical AI applications.
 
 _Projects and documentation will be updated as my learning progresses._
+
+## How to Run the Projects
+
+Each project may have its own requirements and instructions for running it. Please refer to the relevant project files and documentation.
+
+## Current Progress
+
+* [x] Student Management System source code uploaded
+* [x] Repository README created
+* [ ] API Client source code uploaded
+
