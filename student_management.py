@@ -1,9 +1,11 @@
 import sqlite3
 
+from urllib3.contrib.emscripten import fetch
+
+
 def create_connection():
     conn = sqlite3.connect('school.db')
     cursor = conn.cursor()
-    return conn, cursor
 
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS students (
@@ -16,8 +18,15 @@ def create_connection():
         ''')
     conn.commit()
 
+    return conn, cursor
+
 def add_student(cursor, conn):
-    name = input("Enter student name: ")
+    name = input("Enter student name: ").strip()
+
+    if not name:
+        print("Student name cannot be empty!")
+        return
+
     try:
         age = int(input("Enter student age: "))
         if age <= 0 or age > 120:
@@ -26,8 +35,30 @@ def add_student(cursor, conn):
     except ValueError:
         print("Invalid age! Please enter a number.")
         return
-    department = input("Enter student department: ")
-    matric_number = input("Enter student matric number: ")
+
+    department = input("Enter student department: ").strip()
+
+    if not department:
+        print("Department cannot be empty!")
+        return
+
+    matric_number = input("Enter student matric number: ").strip()
+
+    if not matric_number:
+        print("Matric number cannot be empty!")
+        return
+
+    cursor.execute(
+        "SELECT id FROM students WHERE matric_number = ?",
+        (matric_number,)
+    )
+
+    existing_student = cursor.fetchone()
+
+    if existing_student is not None:
+        print("Student already exists!")
+        return
+
 
     cursor.execute('''
         INSERT INTO students (name, age, department, matric_number)
@@ -40,11 +71,20 @@ def add_student(cursor, conn):
 def view_students(cursor):
     cursor.execute("SELECT * FROM students")
     students = cursor.fetchall()
+
+    if not students:
+        print("No student records found.")
+        return
+
     for student in students:
         print(student)
 
 def search_student(cursor):
-    matric_number = input("Enter matric number: ")
+    matric_number = input("Enter matric number: ").strip()
+
+    if not matric_number:
+        print("Matric number cannot be empty!")
+        return
 
     cursor.execute("""SELECT * FROM students WHERE matric_number = ?""",
                    (matric_number,))
@@ -57,12 +97,22 @@ def search_student(cursor):
         print("Student not found!")
 
 def update_student(cursor, conn):
-    student_id = int(input("Enter student ID: "))
-    new_department = input("Enter new department: ")
+    try:
+        student_id = int(input("Enter student ID: "))
+    except ValueError:
+        print("Invalid student ID! Please enter a number.")
+        return
+
+    new_department = input("Enter new department: ").strip()
+
+    if not new_department:
+        print("Department cannot be empty!")
+        return
 
     cursor.execute("""UPDATE students 
     SET department = ? WHERE id = ?""",
     (new_department, student_id))
+
     conn.commit()
 
     if cursor.rowcount > 0:
@@ -71,11 +121,20 @@ def update_student(cursor, conn):
         print("Student not found!")
 
 def delete_student(cursor, conn):
-    student_id = int(input("Enter student ID: "))
+    try:
+        student_id = int(input("Enter student ID: "))
+    except ValueError:
+        print("Invalid student ID! Please enter a number.")
+        return
+
+    if student_id <= 0:
+        print("Student ID must be a positive number.")
+        return
 
     cursor.execute("""DELETE FROM students WHERE id = ?""",
                    (student_id,)
                    )
+
     conn.commit()
 
     if cursor.rowcount > 0:
