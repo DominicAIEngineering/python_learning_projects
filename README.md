@@ -35,3 +35,19 @@ Each project may have its own requirements and instructions for running it. Plea
 * [x] Repository README created
 * [ ] API Client source code uploaded
 
+## Recent Improvements
+
+The Student Management System has been updated with improved validation and error handling.
+
+* Validates student names, ages, departments, and matriculation numbers.
+* Prevents duplicate matriculation number registration.
+* Handles invalid student IDs during updates and deletions.
+* Handles empty search input and empty student records.
+* Initializes the SQLite database table when needed.
+* Closes the database connection when the program exits.
+
+## Technologies Used
+
+* Python
+* SQLite
+* SQL
